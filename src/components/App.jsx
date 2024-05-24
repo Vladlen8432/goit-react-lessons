@@ -1,22 +1,30 @@
-import { Product } from './Product';
-import { productData } from './ProductData';
+import { Product } from './Product/Product';
+import { productData } from './Product/ProductData';
+import Section from './Section/Section';
+import css from './App.module.css';
 
 export const App = () => {
   return (
-    <section>
-      <h1>LOGO</h1>
+    <div>
+      <Section>
+        <h1>LOGO</h1>
+      </Section>
 
-      {productData.map(product => {
-        return (
-          <Product
-            key={product.id}
-            title={product.title}
-            price={product.price}
-            discount={product.discount}
-            imageURL={product.imageURL}
-          />
-        );
-      })}
-    </section>
+      <Section title="Product list">
+        <div className={css.productList}>
+          {productData.map(product => {
+            return (
+              <Product
+                key={product.id}
+                title={product.title}
+                price={product.price}
+                discount={product.discount}
+                imageURL={product.imageURL}
+              />
+            );
+          })}
+        </div>
+      </Section>
+    </div>
   );
 };
