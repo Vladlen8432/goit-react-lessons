@@ -1,6 +1,13 @@
 import css from './Product.module.css';
 
-export const Product = ({ title, price, imageURL, discount }) => {
+export const Product = ({
+  title,
+  price,
+  imageURL,
+  discount,
+  handleDeleteProduct,
+  id,
+}) => {
   const productBg = discount ? '#00b300' : '#d9d9d9';
 
   const productStyles = {
@@ -20,6 +27,13 @@ export const Product = ({ title, price, imageURL, discount }) => {
       <p>{price}$</p>
       <button className={css.productAddToCardBtn} type="button">
         Add to cart
+      </button>
+      <button
+        onClick={() => handleDeleteProduct(id)}
+        className={css.productAddToCardBtn}
+        type="button"
+      >
+        &times;
       </button>
     </div>
   );
