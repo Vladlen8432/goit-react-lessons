@@ -1,34 +1,43 @@
 import { Component } from 'react';
+import { nanoid } from 'nanoid';
+
 import { Product } from './Product/Product';
 import { productData } from './Product/ProductData';
 import Section from './Section/Section';
+import ProductForm from './ProductForm/ProductForm';
 import css from './App.module.css';
 
 export class App extends Component {
   state = {
-    counterValue: 0,
     products: productData,
-    showMessage: false,
-    currentPage: 1,
-  };
-
-  handleIncrement = () => {
-    this.setState({ counterValue: this.state.counterValue + 1 });
-  };
-
-  handleDecrement = () => {
-    if (this.state.counterValue === 0) {
-      alert('Please, stop!');
-      return;
-    }
-
-    this.setState({ counterValue: this.state.counterValue - 1 });
   };
 
   handleDeleteProduct = productId => {
     this.setState({
       products: this.state.products.filter(product => product.id !== productId),
     });
+  };
+
+  handleAddProduct = productData => {
+    console.log('productData:', productData);
+
+    const hasDuplicates = this.state.products.some(
+      product => product.title === productData.title
+    );
+
+    if (hasDuplicates) {
+      alert(`Oops, product with title '${productData.title}' already exist`);
+      return;
+    }
+
+    const finalProduct = {
+      ...productData,
+      id: nanoid(),
+    };
+
+    this.setState(prevState => ({
+      products: [...prevState.products, finalProduct],
+    }));
   };
 
   render() {
@@ -40,13 +49,10 @@ export class App extends Component {
       <div>
         <Section>
           <h1>LOGO</h1>
-          <button onClick={this.handleDecrement}>Decrement</button>
-          <b>Couner value: {this.state.counterValue}</b>
-          <button onClick={this.handleIncrement}>Increment</button>
+        </Section>
 
-          {this.state.counterValue > 5 && (
-            <div>Congrats! You won discount 20%</div>
-          )}
+        <Section title="Add product form">
+          <ProductForm handleAddProduct={this.handleAddProduct} />
         </Section>
 
         <Section title="Product list">
