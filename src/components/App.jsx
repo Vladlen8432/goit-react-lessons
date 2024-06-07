@@ -6,10 +6,13 @@ import { productData } from './Product/ProductData';
 import Section from './Section/Section';
 import ProductForm from './ProductForm/ProductForm';
 import css from './App.module.css';
+import Modal from './Modal/Modal';
 
 export class App extends Component {
   state = {
     products: productData,
+    isOpenModal: false,
+    modalData: null,
   };
 
   handleDeleteProduct = productId => {
@@ -40,6 +43,20 @@ export class App extends Component {
     }));
   };
 
+  openModal = someDataToModal => {
+    this.setState({
+      isOpenModal: true,
+      modalData: someDataToModal,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isOpenModal: false,
+      modalData: null,
+    });
+  };
+
   render() {
     const sortedProducts = [...this.state.products].sort(
       (a, b) => b.discount - a.discount
@@ -67,11 +84,19 @@ export class App extends Component {
                   discount={product.discount}
                   imageURL={product.imageURL}
                   handleDeleteProduct={this.handleDeleteProduct}
+                  openModal={this.openModal}
                 />
               );
             })}
           </div>
         </Section>
+
+        {this.state.isOpenModal && (
+          <Modal
+            closeModal={this.closeModal}
+            modalData={this.state.modalData}
+          />
+        )}
       </div>
     );
   }
