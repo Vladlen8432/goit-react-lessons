@@ -15,6 +15,21 @@ export class App extends Component {
     modalData: null,
   };
 
+  componentDidMount() {
+    const stringifiedProducts = localStorage.getItem('products');
+
+    const parsedProducts = JSON.parse(stringifiedProducts) ?? productData;
+
+    this.setState({ products: parsedProducts });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.products !== this.state.products) {
+      const stringifiedProducts = JSON.stringify(this.state.products);
+      localStorage.setItem('products', stringifiedProducts);
+    }
+  }
+
   handleDeleteProduct = productId => {
     this.setState({
       products: this.state.products.filter(product => product.id !== productId),
@@ -101,3 +116,5 @@ export class App extends Component {
     );
   }
 }
+
+// const parsedProducts = JSON.parse(stringifiedProducts) ?? productData;

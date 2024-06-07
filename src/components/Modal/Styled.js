@@ -19,6 +19,9 @@ export const StyledModal = styled.div`
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    &:hover {
+      cursor: auto;
+    }
   }
 
   .closeBtn {
