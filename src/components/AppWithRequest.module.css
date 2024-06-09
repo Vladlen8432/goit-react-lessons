@@ -45,11 +45,13 @@
   position: relative;
   list-style: none;
   padding: 0;
+  position: sticky;
+  top: 15px;
+  max-height: 100vh;
+  overflow: overlay;
 }
 
 .commentsListItem {
-  position: sticky;
-  top: 15px;
   padding: 20px;
   border: 2px solid green;
   margin-bottom: 25px;
