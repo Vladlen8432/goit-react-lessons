@@ -1,60 +1,120 @@
-const productData = [
-  {
-    id: '1',
-    title: 'Tacos with cheese',
-    price: 10.9,
-    discount: null,
-    imageURL:
-      'https://www.oliveandmango.com/images/uploads/2022_02_21_cheesy_baked_tacos_1.jpg',
-  },
+import { Component } from 'react';
+import { nanoid } from 'nanoid';
 
-  {
-    id: '2',
-    title: 'Tacos with lime',
-    price: 12.6,
-    discount: 1.5,
-    imageURL:
-      'https://michielskitchen.com/wp-content/uploads/2020/08/lime-chicken-and-coriander-tacos-recipe-michiels-kitchen-01-1.jpg',
-  },
+import { Product } from './Product/Product';
+import { productData } from './Product/ProductData';
+import Section from './Section/Section';
+import ProductForm from './ProductForm/ProductForm';
+import css from './App.module.css';
+import Modal from './Modal/Modal';
 
-  {
-    id: '3',
-    title: 'Tacos with pineapple',
-    price: 13.4,
-    discount: 2.5,
-    imageURL:
-      'https://michielskitchen.com/wp-content/uploads/2020/08/lime-chicken-and-coriander-tacos-recipe-michiels-kitchen-01-1.jpg',
-  },
-];
+export class App extends Component {
+  state = {
+    products: productData,
+    isOpenModal: false,
+    modalData: null,
+  };
 
-export const App = () => {
-  return (
-    <section>
-      <h1>LOGO</h1>
+  componentDidMount() {
+    const stringifiedProducts = localStorage.getItem('products');
 
-      {productData.map(product => {
-        return (
-          <Product
-            key={product.id}
-            title={product.title}
-            price={product.price}
-            discount={product.discount}
-            imageURL={product.imageURL}
+    const parsedProducts = JSON.parse(stringifiedProducts) ?? productData;
+
+    this.setState({ products: parsedProducts });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.products !== this.state.products) {
+      const stringifiedProducts = JSON.stringify(this.state.products);
+      localStorage.setItem('products', stringifiedProducts);
+    }
+  }
+
+  handleDeleteProduct = productId => {
+    this.setState({
+      products: this.state.products.filter(product => product.id !== productId),
+    });
+  };
+
+  handleAddProduct = productData => {
+    console.log('productData:', productData);
+
+    const hasDuplicates = this.state.products.some(
+      product => product.title === productData.title
+    );
+
+    if (hasDuplicates) {
+      alert(`Oops, product with title '${productData.title}' already exist`);
+      return;
+    }
+
+    const finalProduct = {
+      ...productData,
+      id: nanoid(),
+    };
+
+    this.setState(prevState => ({
+      products: [...prevState.products, finalProduct],
+    }));
+  };
+
+  openModal = someDataToModal => {
+    this.setState({
+      isOpenModal: true,
+      modalData: someDataToModal,
+    });
+  };
+
+  closeModal = () => {
+    this.setState({
+      isOpenModal: false,
+      modalData: null,
+    });
+  };
+
+  render() {
+    const sortedProducts = [...this.state.products].sort(
+      (a, b) => b.discount - a.discount
+    );
+
+    return (
+      <div>
+        <Section>
+          <h1>LOGO</h1>
+        </Section>
+
+        <Section title="Add product form">
+          <ProductForm handleAddProduct={this.handleAddProduct} />
+        </Section>
+
+        <Section title="Product list">
+          <div className={css.productList}>
+            {sortedProducts.map(product => {
+              return (
+                <Product
+                  key={product.id}
+                  id={product.id}
+                  title={product.title}
+                  price={product.price}
+                  discount={product.discount}
+                  imageURL={product.imageURL}
+                  handleDeleteProduct={this.handleDeleteProduct}
+                  openModal={this.openModal}
+                />
+              );
+            })}
+          </div>
+        </Section>
+
+        {this.state.isOpenModal && (
+          <Modal
+            closeModal={this.closeModal}
+            modalData={this.state.modalData}
           />
-        );
-      })}
-    </section>
-  );
-};
+        )}
+      </div>
+    );
+  }
+}
 
-const Product = ({ title, price, imageURL, discount }) => {
-  return (
-    <div>
-      <img src={imageURL} alt="Tacos With Lime" width="640" />
-      <h2>{title}</h2>
-      {discount && <h3>Discount: {discount}$</h3>}
-      <p>{price}$</p>
-      <button type="button">Add to cart</button>
-    </div>
-  );
-};
+// const parsedProducts = JSON.parse(stringifiedProducts) ?? productData;
